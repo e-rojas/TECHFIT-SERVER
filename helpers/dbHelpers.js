@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports = pool => {
   //get all users
-  const getUsers = (request, response) => {
+  const getUsers = ( ) => {
     console.log("getUser dbhelpers");
     const query = {
       text: "SELECT * FROM users ORDER BY id ASC"
@@ -57,6 +57,13 @@ module.exports = pool => {
     const query = {
       text: "SELECT * FROM users WHERE email = $1",
       values: [email]
+    };
+    return pool.query(query);
+  };
+  //get all users
+  const getRecipes = ( ) => {
+    const query = {
+      text: "SELECT * FROM users ORDER BY id ASC"
     };
     return pool.query(query);
   };
