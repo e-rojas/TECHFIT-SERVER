@@ -61,11 +61,12 @@ module.exports = pool => {
     return pool.query(query);
   };
   //get all users
-  const getRecipes = ( ) => {
+  const getRecipes = (userId) => {
+    console.log('hh', userId)
     const query = {
-      text: "SELECT * FROM users ORDER BY id ASC"
+      text: `select * from recipes join user_recipes on recipes.id = user_recipes.recipe_id where user_id=${userId}`
     };
-    return pool.query(query);
+    return pool.query(query.text);
   };
 
   return {
@@ -74,6 +75,7 @@ module.exports = pool => {
     updateUser,
     addUser,
     loginUser,
+    getRecipes
   
   };
 };
