@@ -8,6 +8,7 @@ const dbHelpers = require("./helpers/dbHelpers")(pool);
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const mealsRouter = require("./routes/meals");
+const workoutsRouter = require("./routes/workouts")
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -25,7 +26,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/api/meals", mealsRouter(dbHelpers));
-app.use("/api/users", usersRouter(dbHelpers));
+app.use("/api/users", usersRouter(dbHelpers))
+app.use("/api/workouts", workoutsRouter(dbHelpers));
 
 
 // catch 404 and forward to error handler
