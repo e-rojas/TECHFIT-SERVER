@@ -9,6 +9,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const mealsRouter = require("./routes/meals");
 const workoutsRouter = require("./routes/workouts")
+const userWorkoutsRouter = require("./routes/user-workouts")
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/", indexRouter);
 app.use("/api/meals", mealsRouter(dbHelpers));
 app.use("/api/users", usersRouter(dbHelpers))
 app.use("/api/workouts", workoutsRouter(dbHelpers));
+app.use("/api/user-workouts", userWorkoutsRouter(dbHelpers));
 
 
 // catch 404 and forward to error handler
