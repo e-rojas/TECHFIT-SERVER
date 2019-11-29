@@ -60,7 +60,7 @@ module.exports = pool => {
     };
     return pool.query(query);
   };
-  //get all users
+  //get all user recipes
   const getRecipes = (userId) => {
     console.log('hh', userId)
     const query = {
@@ -82,6 +82,44 @@ module.exports = pool => {
     return pool.query(query)
   }
 
+  //show workouts in database
+  const showWorkouts = () => {
+    const query = {
+      text: `select * from workouts`, 
+    };
+    return pool.query(query)
+  } 
+
+
+  //get all user workout
+  const getWorkouts = (userId) => {
+    const query = {
+      text: `select * from workouts join user_workouts on workouts.id = user_workouts.workout_id where user_id=$1 `, 
+      values: [userId]
+    };
+    return pool.query(query)
+  } 
+
+  //add new user workout
+  const addWorkout = (params) => {
+    const query = {
+      text: `INSERT INTO user_workouts (workout_id, user_id) VALUES ($1, $2) RETURNING id`, 
+      values: [params.userId, params.workoutId]
+    };
+    return pool.query(query)
+  }
+
+  //Generate workouts by id
+  const generateWorkoutsById = id => {
+    const query = {
+      text: "SELECT * FROM workouts WHERE id = $1",
+      values: [id]
+    };
+    return pool.query(query);
+  };
+
+
+
   return {
     getUsers,
     getUserById,
@@ -89,7 +127,12 @@ module.exports = pool => {
     addUser,
     loginUser,
     getRecipes,
-    addRecipe
+    addRecipe,
+    getWorkouts,
+    addWorkout,
+    generateWorkoutsById,
+    showWorkouts
+
   
   };
 };
