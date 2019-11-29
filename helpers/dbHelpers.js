@@ -64,10 +64,23 @@ module.exports = pool => {
   const getRecipes = (userId) => {
     console.log('hh', userId)
     const query = {
-      text: `select * from recipes join user_recipes on recipes.id = user_recipes.recipe_id where user_id=${userId}`
+      text: `select * from recipes join user_recipes on recipes.id = user_recipes.recipe_id where user_id=$1`,
+      values: [userId]
     };
-    return pool.query(query.text);
+    return pool.query(query);
   };
+
+  //add new recipe
+  const addRecipe = (params) => {
+    console.log(params)
+    const query = {
+      text: `with new_recipe as (INSERT INTO recipes (recipe_title, recipe_description, prep_time, servings, photo_url, source_url) VALUES($1, $2, $3, $4, $5, $6) RETURNING id)
+      INSERT INTO user_recipes (user_id, recipe_id)
+      select $7, new_recipe.id from new_recipe`,
+      values: [params.recipeTitle, params.recipeDescription, parseInt(params.prepTime), parseInt(params.servings), params.photoUrl, params.sourceUrl, params.userId]
+    };
+    return pool.query(query)
+  }
 
   return {
     getUsers,
@@ -75,7 +88,8 @@ module.exports = pool => {
     updateUser,
     addUser,
     loginUser,
-    getRecipes
+    getRecipes,
+    addRecipe
   
   };
 };
