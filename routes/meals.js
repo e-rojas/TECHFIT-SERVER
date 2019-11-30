@@ -17,7 +17,7 @@ module.exports = (dbHelpers) => {
         dbHelpers
             .addRecipe(req.body)
             .then(result => {
-                res.sendStatus(200).res.message({message:'Succesfully submitted!!'})
+                res.sendStatus(200)
         })
     })
 
