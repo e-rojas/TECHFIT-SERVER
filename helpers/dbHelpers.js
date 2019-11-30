@@ -103,9 +103,11 @@ module.exports = pool => {
   //add new user workout
   const addWorkout = (params) => {
     const query = {
-      text: `INSERT INTO user_workouts (workout_id, user_id) VALUES ($1, $2) RETURNING id`, 
-      values: [params.userId, params.workoutId]
+      text: `INSERT INTO user_workouts (user_id, workout_id) VALUES ($1, $2) RETURNING id`, 
+      values: [params.user_id, params.workout_id]
     };
+    console.log("HELLO DEBUG")
+    console.log(params)
     return pool.query(query)
   }
 

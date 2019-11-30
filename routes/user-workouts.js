@@ -17,6 +17,7 @@ module.exports = (dbHelpers) => {
 
     //add saved Workout to user
     router.post('/', function (req, res) {
+        console.log("DEBUG" , req.body)
         dbHelpers
             .addWorkout(req.body)
             .then(result => {

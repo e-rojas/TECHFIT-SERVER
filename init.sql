@@ -27,7 +27,11 @@ CREATE TABLE users (
 CREATE TABLE recipes (
   id SERIAL PRIMARY KEY NOT NULL,
   recipe_title VARCHAR(250) NOT NULL,
+<<<<<<< HEAD
   recipe_description VARCHAR(500) NOT NULL,
+=======
+  recipe_description TEXT,
+>>>>>>> cadc4234a0006a03029d54373c3dcf6c52f840ca
   prep_time INT,
   servings INT,
   source_url TEXT,
