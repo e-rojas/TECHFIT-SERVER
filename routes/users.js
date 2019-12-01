@@ -6,11 +6,13 @@ module.exports = dbHelpers => {
 
   router.get('/user-info', function (req, res) {
     console.log('test')
+    console.log(req.headers)
     const { authorization} = req.headers;
-    const [, token] = authorization.split(" ");
+    const [bearer, token] = authorization.split(" ");
      //extracting the payload  example {userId: 1}
     const payload = jwt.verify(token, process.env.SECRET);
-    console.log(payload)
+    console.log('after payload')
+
     dbHelpers
     .getUserById(payload.userID)
       .then(result => {
