@@ -6,10 +6,10 @@ module.exports = (dbHelpers) => {
   //show workouts in database
 
         //get all user saved Workouts
-    router.get('/', function (req, res) {
-        console.log('saved workout', req.body.user_id)
+    router.get('/:id', function (req, res) {
+        console.log('saved workout', req.params)
         dbHelpers
-        .getWorkouts(req.body.user_id)
+        .getWorkouts(req.params.id)
           .then(result => {
           res.send(result.rows)
         })

@@ -4,7 +4,7 @@ var router = express.Router();
 module.exports = (dbHelpers) => {
         //get all user saved recipes
     router.get('/', function (req, res) {
-        console.log('hello',req.body.user_id)
+        console.log('hello',req.body)
         dbHelpers
         .getRecipes(req.body.user_id)
           .then(result => {
@@ -17,7 +17,7 @@ module.exports = (dbHelpers) => {
         dbHelpers
             .addRecipe(req.body)
             .then(result => {
-                res.sendStatus(200))
+                res.sendStatus(200)
         })
     })
 

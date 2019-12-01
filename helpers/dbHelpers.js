@@ -60,7 +60,7 @@ module.exports = pool => {
     };
     return pool.query(query);
   };
-  //get all user recipes
+  //get all recipes
   const getRecipes = (userId) => {
     console.log('hh', userId)
     const query = {
@@ -94,7 +94,11 @@ module.exports = pool => {
   //get all user workout
   const getWorkouts = (userId) => {
     const query = {
-      text: `select * from workouts join user_workouts on workouts.id = user_workouts.workout_id where user_id=$1 `, 
+      text: `SELECT user_workouts.id, user_id, name, workout_description, difficulty, workouts.image_url, video_url
+      FROM user_workouts
+      JOIN workouts on workouts.id = workout_id
+      JOIN users on users.id = user_id
+      WHERE user_id = $1`, 
       values: [userId]
     };
     return pool.query(query)
@@ -120,6 +124,21 @@ module.exports = pool => {
     return pool.query(query);
   };
 
+  // get user saved recipes
+  const getUserRecipes = (userId) => {
+    const query = {
+      text: `SELECT user_recipes.id, user_id, recipe_title, recipe_description, prep_time, servings, photo_url, source_url
+      FROM user_recipes
+      JOIN recipes on recipes.id = recipe_id
+      JOIN users on users.id = user_id
+      WHERE user_id = $1`, 
+      values: [userId]
+    };
+    return pool.query(query)
+  };
+
+
+
 
 
   return {
@@ -133,7 +152,8 @@ module.exports = pool => {
     getWorkouts,
     addWorkout,
     generateWorkoutsById,
-    showWorkouts
+    showWorkouts,
+    getUserRecipes
 
   
   };
