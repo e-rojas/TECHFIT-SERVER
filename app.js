@@ -10,7 +10,9 @@ const usersRouter = require("./routes/users");
 const mealsRouter = require("./routes/meals");
 const workoutsRouter = require("./routes/workouts")
 const userWorkoutsRouter = require("./routes/user-workouts")
+const userMealsRouter = require("./routes/user-meals")
 const bodyParser = require("body-parser");
+
 
 const app = express();
 
@@ -30,6 +32,7 @@ app.use("/api/meals", mealsRouter(dbHelpers));
 app.use("/api/users", usersRouter(dbHelpers))
 app.use("/api/workouts", workoutsRouter(dbHelpers));
 app.use("/api/user-workouts", userWorkoutsRouter(dbHelpers));
+app.use("/api/user-meals", userMealsRouter(dbHelpers));
 
 
 // catch 404 and forward to error handler
