@@ -134,8 +134,22 @@ module.exports = pool => {
       WHERE user_id = $1`, 
       values: [userId]
     };
+
+
     return pool.query(query)
   };
+
+
+  const deleteRecipe = (id) => {
+    console.log("deleteID", id)
+    const query = {
+      text: `DELETE from user_recipes
+      WHERE id = $1`,
+      values: [id]
+  }
+  return pool.query(query)
+}
+
 
   
 
@@ -155,7 +169,8 @@ module.exports = pool => {
     addWorkout,
     generateWorkoutsById,
     showWorkouts,
-    getUserRecipes
+    getUserRecipes,
+    deleteRecipe
 
   
   };
