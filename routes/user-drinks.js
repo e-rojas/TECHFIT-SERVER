@@ -6,21 +6,93 @@ module.exports = (dbHelpers) => {
   //Base of these routes is /api/user-drinks/
 
   router.post('/', (req, res) => {
-    const query = req.query;
+    const { id, action, drinkType } = req.query;
 
+    //Check for current day in calendar
     dbHelpers
-      .updateDrinksTracking(query)
-      .then((results) => {
-        res
-          .json(results)
-          .status(200)
-      })
-      .catch((e) => {
-        console.log(e)
-        res.status(500)
-      })
+      .getCurrentDay()
+      .then((dayResults) => {
+        if (dayResults.rows.length !== 0) {
+          const dateId = dayResults.rows[0].id;
+          //Update count as request by user
+          dbHelpers
+            .updateCount(id, dateId, action, drinkType)
+            .then((updateResults) => {
+              //Count has been updated successfully
+              //State change will be dispatched by Client-side
+              res.status(200).send();
+            })
+            .catch((e) => {
+              res.status(500).send();
+            })
+        } else if (dayResults.rows.length === 0) {
+          //Create date in calendar table
+          dbHelpers.insertDate()
+            .then((results) => {
+              const dateId = results.rows[0].id;
+              //Initialize drink_tracking row for this date and user
+              dbHelpers
+                .initializeCount(id, dateId)
+                .then((results) => {
+                  //Update count as requested by user
+                  dbHelpers
+                    .updateCount(id, dateId, action, drinkType)
+                    .then((results) => {
+                      res.status(200).send();
+                    })
+                    .catch((e) => {
+                      res.status(500).send();
+                    })
+                })
+                .catch((e) => {
+                  res.status(500).send();
+                })
+              })
+            .catch((e) => {
+              res.status(500).send();
+              })
+          
+        .catch((e) => {
+          res.status(500).send();
+        })
+      }
+    })
+  });
 
-  })
+    // dbHelpers
+    //   .updateDrinksTracking(id, action, drinktype)
+    //   .then((results) => {
+    //     console.log(results)
+    //     if (results.rows.length === 0) {
+    //       dbHelpers
+    //         .insertDate(id, action, drinkType)
+    //         .then((results) => {
+    //           res.status(200);
+    //         })
+    //         .catch((e) => {
+    //           console.log(e);
+    //           res.status(200);
+    //         })
+    //     } else {
+    //       const dateId = results.rows[0].id;
+    //       console.log('date id found. about to update count.');
+          
+    //       dbHelpers
+    //         .updateCount(id, dateId, action, drinkType)
+    //         .then((result) => {
+    //           console.log(result);
+    //           res.status(200);
+    //         })
+    //         .catch((e) => {
+    //           console.log(e);
+    //           res.status(500);
+    //         })
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(e)
+    //     res.status(500)
+    //   })
 
   router.get('/', (req, res) => {
     const { id } = req.query;
