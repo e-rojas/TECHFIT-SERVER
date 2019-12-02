@@ -21,7 +21,7 @@ CREATE TABLE users (
   height INT,
   Location VARCHAR(50),
   bio VARCHAR(250),
-  image_url TEXT 
+  image_url TEXT DEFAULT 'https://static1.squarespace.com/static/54b7b93ce4b0a3e130d5d232/54b7cd91e4b0b6572f771175/5a9924d20d92970572b7c3b6/1519986489468/icon.png?format=500w'
 );
 
 CREATE TABLE recipes (
