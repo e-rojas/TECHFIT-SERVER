@@ -137,11 +137,68 @@ module.exports = pool => {
     return pool.query(query)
   };
 
-  
+  const getDrinksTracking = (userId) => {
+    const query = {
+      text: `
+        SELECT * 
+        FROM drinks_tracking
+        JOIN users ON users.id = user_id
+        WHERE user_id = $1`,
+      values: [userId]
+    };
 
+    return pool.query(query)
+  };
 
+  const updateDrinksTracking = ({ id, action, drinkType }) => {
+    pool
+      .query(`
+        SELECT *
+        FROM calendar
+        WHERE date = CURRENT_DATE
+      `)
+      .then((results) => {
+        if (results.rows.length === 0) {
+          insertDate(id, action, drinkType);
+        } else {
+          updateCount(id, action, drinkType);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    
+    const query = {
+      text: `
+        SELECT *
+        FROM drinks_tracking
+        JOIN users ON users.id = user_id
+        JOIN calendar ON calendar.id = date_id
+        WHERE user_id = $1
+        LIMIT 7`,
+      values: [id]
+    }
 
+    return pool.query(query)
+  };
 
+  const updateCount = (id, action, drinkType) => {
+    console.log('update count function')
+  };
+
+  const insertDate = (id, action, drinkType) => {
+    pool
+      .query(
+        `INSERT INTO calendar (date) 
+        VALUES (CURRENT_DATE)`
+      )
+      .then((results) => {
+        updateCount(id, action, drinkType);
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  };
 
   return {
     getUsers,
@@ -155,8 +212,8 @@ module.exports = pool => {
     addWorkout,
     generateWorkoutsById,
     showWorkouts,
-    getUserRecipes
-
-  
+    getUserRecipes,
+    getDrinksTracking,
+    updateDrinksTracking
   };
 };
