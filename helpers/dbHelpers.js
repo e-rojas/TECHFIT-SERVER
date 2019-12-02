@@ -184,7 +184,15 @@ module.exports = pool => {
 
   const updateCount = (id, action, drinkType) => {
     console.log('update count function')
+    pool
+      .query(
+        ``
+      )
   };
+
+  const initializeCount = (id, action, drinkType) => {
+
+  }
 
   const insertDate = (id, action, drinkType) => {
     pool
@@ -193,7 +201,8 @@ module.exports = pool => {
         VALUES (CURRENT_DATE)`
       )
       .then((results) => {
-        updateCount(id, action, drinkType);
+        initializeCount(id, action, drinkType);
+        // updateCount(id, action, drinkType);
       })
       .catch((e) => {
         console.log(e);
