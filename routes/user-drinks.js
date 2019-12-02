@@ -59,41 +59,6 @@ module.exports = (dbHelpers) => {
     })
   });
 
-    // dbHelpers
-    //   .updateDrinksTracking(id, action, drinktype)
-    //   .then((results) => {
-    //     console.log(results)
-    //     if (results.rows.length === 0) {
-    //       dbHelpers
-    //         .insertDate(id, action, drinkType)
-    //         .then((results) => {
-    //           res.status(200);
-    //         })
-    //         .catch((e) => {
-    //           console.log(e);
-    //           res.status(200);
-    //         })
-    //     } else {
-    //       const dateId = results.rows[0].id;
-    //       console.log('date id found. about to update count.');
-          
-    //       dbHelpers
-    //         .updateCount(id, dateId, action, drinkType)
-    //         .then((result) => {
-    //           console.log(result);
-    //           res.status(200);
-    //         })
-    //         .catch((e) => {
-    //           console.log(e);
-    //           res.status(500);
-    //         })
-    //     }
-    //   })
-    //   .catch((e) => {
-    //     console.log(e)
-    //     res.status(500)
-    //   })
-
   router.get('/', (req, res) => {
     const { id } = req.query;
 
