@@ -150,63 +150,52 @@ module.exports = pool => {
     return pool.query(query)
   };
 
-  const updateDrinksTracking = ({ id, action, drinkType }) => {
-    pool
+  //Find current Day
+  const getCurrentDay = () => {
+    return pool
       .query(`
         SELECT *
         FROM calendar
-        WHERE date = CURRENT_DATE
-      `)
-      .then((results) => {
-        if (results.rows.length === 0) {
-          insertDate(id, action, drinkType);
-        } else {
-          updateCount(id, action, drinkType);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    
-    const query = {
-      text: `
-        SELECT *
-        FROM drinks_tracking
-        JOIN users ON users.id = user_id
-        JOIN calendar ON calendar.id = date_id
-        WHERE user_id = $1
-        LIMIT 7`,
-      values: [id]
-    }
-
-    return pool.query(query)
-  };
-
-  const updateCount = (id, action, drinkType) => {
-    console.log('update count function')
-    pool
-      .query(
-        ``
-      )
-  };
-
-  const initializeCount = (id, action, drinkType) => {
-
+        WHERE date = CURRENT_DATE`);
   }
 
+  //Update a specific drink count
+  const updateCount = (userId, dateId, action, drinkType) => {
+    let mathString = '';
+    if (action === 'increase') {
+      mathString = '+ 1';
+    } else if (action === 'decrease') {
+      mathString = '- 1';
+    }
+    const query = {
+      text: `
+      UPDATE drinks_tracking
+      SET ${drinkType}_count = ${drinkType}_count ${mathString}
+      WHERE user_id = ${userId}
+      AND date_id = ${dateId}`
+    }
+
+    return pool.query(query);
+  };
+
+  //Generate empty row to be filled with values
+  const initializeCount = (userId, dateId) => {
+    return pool
+      .query({
+        text: `
+          INSERT INTO drinks_tracking (user_id, date_id, water_count, coffee_count, soda_count, other_count)
+          VALUES ($1, $2, 0, 0, 0, 0)`,
+        values: [userId, dateId]
+      })
+  }
+
+  //Generate row in calendar with current date
   const insertDate = (id, action, drinkType) => {
-    pool
-      .query(
-        `INSERT INTO calendar (date) 
+    return pool
+      .query(`
+        INSERT INTO calendar (date) 
         VALUES (CURRENT_DATE)`
       )
-      .then((results) => {
-        initializeCount(id, action, drinkType);
-        // updateCount(id, action, drinkType);
-      })
-      .catch((e) => {
-        console.log(e);
-      })
   };
 
   return {
@@ -223,6 +212,9 @@ module.exports = pool => {
     showWorkouts,
     getUserRecipes,
     getDrinksTracking,
-    updateDrinksTracking
+    initializeCount,
+    insertDate,
+    getCurrentDay,
+    updateCount
   };
 };
