@@ -25,6 +25,17 @@ module.exports = (dbHelpers) => {
         })
     })
 
+
+    // delete user workouts
+    router.delete('/:id', function (req, res){
+        console.log("delete2",req.body)
+        dbHelpers
+        .deleteWorkout(req.body.id)
+          .then(result => {
+            res.send(result.rows)
+          })
+      })
+
     
     return router;
 }
