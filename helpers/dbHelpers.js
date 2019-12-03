@@ -137,18 +137,41 @@ module.exports = pool => {
     return pool.query(query)
   };
 
+  //Get tracking values for incrementers
   const getDrinksTracking = (userId) => {
     const query = {
       text: `
         SELECT * 
         FROM drinks_tracking
         JOIN users ON users.id = user_id
-        WHERE user_id = $1`,
+        JOIN calendar ON calendar.id = date_id
+        WHERE user_id = $1
+        AND calendar.date = CURRENT_DATE`,
       values: [userId]
     };
 
     return pool.query(query)
   };
+
+  //get tracking values for chart generation
+  const getDrinksChart = (userId) => {
+    const query = {
+      text: `
+        SELECT 
+          drinks_tracking.*, 
+          EXTRACT (YEAR FROM calendar.date) AS YEAR,
+          EXTRACT (MONTH FROM calendar.date) AS MONTH,
+          EXTRACT (DAY FROM calendar.date) AS DAY
+        FROM drinks_tracking
+        JOIN users ON users.id = user_id
+        JOIN calendar ON calendar.id = date_id
+        WHERE calendar.date > CURRENT_DATE - 7
+        ORDER BY calendar.date ASC
+        LIMIT 7`
+    }
+
+    return pool.query(query);
+  }
 
   //Find current Day
   const getCurrentDay = () => {
@@ -183,14 +206,14 @@ module.exports = pool => {
     return pool
       .query({
         text: `
-          INSERT INTO drinks_tracking (user_id, date_id, water_count, coffee_count, soda_count, other_count)
-          VALUES ($1, $2, 0, 0, 0, 0)`,
+          INSERT INTO drinks_tracking (user_id, date_id)
+          VALUES ($1, $2)`,
         values: [userId, dateId]
       })
   }
 
   //Generate row in calendar with current date
-  const insertDate = (id, action, drinkType) => {
+  const insertDate = () => {
     return pool
       .query(`
         INSERT INTO calendar (date) 
@@ -212,6 +235,7 @@ module.exports = pool => {
     showWorkouts,
     getUserRecipes,
     getDrinksTracking,
+    getDrinksChart,
     initializeCount,
     insertDate,
     getCurrentDay,
