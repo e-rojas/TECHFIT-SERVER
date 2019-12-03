@@ -21,7 +21,7 @@ module.exports = (dbHelpers) => {
         dbHelpers
             .addWorkout(req.body)
             .then(result => {
-                res.sendStatus(200).res.message({message:'Workout out Saved'})
+                res.status(200).send(result.rows[0])
         })
     })
 
