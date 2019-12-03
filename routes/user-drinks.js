@@ -29,25 +29,30 @@ module.exports = (dbHelpers) => {
           //Create date in calendar table
           dbHelpers.insertDate()
             .then((results) => {
-              const dateId = results.rows[0].id;
-              //Initialize drink_tracking row for this date and user
+              //get the ID of the current day
               dbHelpers
-                .initializeCount(id, dateId)
-                .then((results) => {
-                  //Update count as requested by user
+                .getCurrentDay()
+                .then((newDayResults) => {
+                  const newDateId = newDayResults.rows[0].id;
+                  //Initialize drink_tracking row for this date and user
                   dbHelpers
-                    .updateCount(id, dateId, action, drinkType)
+                    .initializeCount(id, newDateId)
                     .then((results) => {
-                      res.status(200).send();
+                      //Update count as requested by user
+                      dbHelpers
+                        .updateCount(id, newDateId, action, drinkType)
+                        .then((updateResults) => {
+                          res.status(200).send();
+                        })
+                        .catch((e) => {
+                          res.status(500).send();
+                        })
                     })
                     .catch((e) => {
                       res.status(500).send();
                     })
+                  })
                 })
-                .catch((e) => {
-                  res.status(500).send();
-                })
-              })
             .catch((e) => {
               res.status(500).send();
               })
@@ -69,7 +74,29 @@ module.exports = (dbHelpers) => {
           .json(results)
           .status(200)
       })
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        res
+          .json(e)
+          .status(500);
+      })
   })
+
+  router.get('/chart', (req, res) => {
+    const { id } = req.query;
+
+    dbHelpers
+      .getDrinksChart(id)
+      .then((results) => {
+        res
+          .json(results)
+          .status(200);
+      })
+      .catch((e) => {
+        res
+          .json(e)
+          .status(500);
+      })
+  })
+
   return router;
 };
