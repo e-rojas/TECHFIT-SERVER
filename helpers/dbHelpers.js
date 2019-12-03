@@ -150,6 +150,16 @@ module.exports = pool => {
   return pool.query(query)
 }
 
+const deleteWorkout = (id) => {
+  console.log("deleteID", id)
+  const query = {
+    text: `DELETE from user_workouts
+    WHERE id = $1`,
+    values: [id]
+}
+return pool.query(query)
+}
+
 
   
 
@@ -170,7 +180,8 @@ module.exports = pool => {
     generateWorkoutsById,
     showWorkouts,
     getUserRecipes,
-    deleteRecipe
+    deleteRecipe,
+    deleteWorkout
 
   
   };
