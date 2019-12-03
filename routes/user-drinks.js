@@ -70,9 +70,39 @@ module.exports = (dbHelpers) => {
     dbHelpers
       .getDrinksTracking(id)
       .then((results) => {
-        res
-          .json(results)
-          .status(200)
+        if(results.rows.length === 0) {
+          dbHelpers.insertDate()
+            .then((results) => {
+              //get the ID of the current day
+              dbHelpers
+                .getCurrentDay()
+                .then((newDayResults) => {
+                  const newDateId = newDayResults.rows[0].id;
+                  //Initialize drink_tracking row for this date and user
+                  dbHelpers
+                    .initializeCount(id, newDateId)
+                    .then((results) => {
+                      //Update count as requested by user
+                      dbHelpers
+                        .updateCount(id, newDateId, action, drinkType)
+                        .then((updateResults) => {
+                          res.status(200).send();
+                        })
+                        .catch((e) => {
+                          res.status(500).send();
+                        })
+                    })
+                    .catch((e) => {
+                      res.status(500).send();
+                    })
+                  })
+                })
+        } else {
+          res
+            .json(results)
+            .status(200)
+        }
+
       })
       .catch((e) => {
         res
