@@ -140,6 +140,22 @@ module.exports = pool => {
   };
 
 
+  //Get tracking values for incrementers
+  const getDrinksTracking = (userId) => {
+    const query = {
+      text: `
+        SELECT * 
+        FROM drinks_tracking
+        JOIN users ON users.id = user_id
+        JOIN calendar ON calendar.id = date_id
+        WHERE user_id = $1
+        AND calendar.date = CURRENT_DATE`,
+      values: [userId]
+    };
+    return pool.query(query)
+  };
+
+
   const deleteRecipe = (id) => {
     console.log("deleteID", id)
     const query = {
@@ -161,11 +177,74 @@ return pool.query(query)
 }
 
 
-  
 
+  //get tracking values for chart generation
+  const getDrinksChart = (userId) => {
+    const query = {
+      text: `
+        SELECT 
+          drinks_tracking.*, 
+          EXTRACT (YEAR FROM calendar.date) AS YEAR,
+          EXTRACT (MONTH FROM calendar.date) AS MONTH,
+          EXTRACT (DAY FROM calendar.date) AS DAY
+        FROM drinks_tracking
+        JOIN users ON users.id = user_id
+        JOIN calendar ON calendar.id = date_id
+        WHERE calendar.date > CURRENT_DATE - 7
+        ORDER BY calendar.date ASC
+        LIMIT 7`
+    }
 
+    return pool.query(query);
+  }
 
+  //Find current Day
+  const getCurrentDay = () => {
+    return pool
+      .query(`
+        SELECT *
+        FROM calendar
+        WHERE date = CURRENT_DATE`);
+  }
 
+  //Update a specific drink count
+  const updateCount = (userId, dateId, action, drinkType) => {
+    let mathString = '';
+    if (action === 'increase') {
+      mathString = '+ 1';
+    } else if (action === 'decrease') {
+      mathString = '- 1';
+    }
+    const query = {
+      text: `
+      UPDATE drinks_tracking
+      SET ${drinkType}_count = ${drinkType}_count ${mathString}
+      WHERE user_id = ${userId}
+      AND date_id = ${dateId}`
+    }
+
+    return pool.query(query);
+  };
+
+  //Generate empty row to be filled with values
+  const initializeCount = (userId, dateId) => {
+    return pool
+      .query({
+        text: `
+          INSERT INTO drinks_tracking (user_id, date_id)
+          VALUES ($1, $2)`,
+        values: [userId, dateId]
+      })
+  }
+
+  //Generate row in calendar with current date
+  const insertDate = () => {
+    return pool
+      .query(`
+        INSERT INTO calendar (date) 
+        VALUES (CURRENT_DATE)`
+      )
+  };
 
   return {
     getUsers,
@@ -180,9 +259,13 @@ return pool.query(query)
     generateWorkoutsById,
     showWorkouts,
     getUserRecipes,
+    getDrinksTracking,
+    getDrinksChart,
+    initializeCount,
+    insertDate,
+    getCurrentDay,
+    updateCount,
     deleteRecipe,
     deleteWorkout
-
-  
   };
 };

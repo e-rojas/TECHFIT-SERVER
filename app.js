@@ -8,9 +8,10 @@ const dbHelpers = require("./helpers/dbHelpers")(pool);
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const mealsRouter = require("./routes/meals");
-const workoutsRouter = require("./routes/workouts")
-const userWorkoutsRouter = require("./routes/user-workouts")
-const userMealsRouter = require("./routes/user-meals")
+const workoutsRouter = require("./routes/workouts");
+const userWorkoutsRouter = require("./routes/user-workouts");
+const userMealsRouter = require("./routes/user-meals");
+const userDrinksRouter = require("./routes/user-drinks");
 const bodyParser = require("body-parser");
 
 //comment
@@ -33,7 +34,7 @@ app.use("/api/users", usersRouter(dbHelpers))
 app.use("/api/workouts", workoutsRouter(dbHelpers));
 app.use("/api/user-workouts", userWorkoutsRouter(dbHelpers));
 app.use("/api/user-meals", userMealsRouter(dbHelpers));
-
+app.use("/api/user-drinks", userDrinksRouter(dbHelpers));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
