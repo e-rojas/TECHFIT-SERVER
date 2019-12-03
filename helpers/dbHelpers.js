@@ -134,8 +134,11 @@ module.exports = pool => {
       WHERE user_id = $1`, 
       values: [userId]
     };
+
+
     return pool.query(query)
   };
+
 
   //Get tracking values for incrementers
   const getDrinksTracking = (userId) => {
@@ -149,9 +152,31 @@ module.exports = pool => {
         AND calendar.date = CURRENT_DATE`,
       values: [userId]
     };
-
     return pool.query(query)
   };
+
+
+  const deleteRecipe = (id) => {
+    console.log("deleteID", id)
+    const query = {
+      text: `DELETE from user_recipes
+      WHERE id = $1`,
+      values: [id]
+  }
+  return pool.query(query)
+}
+
+const deleteWorkout = (id) => {
+  console.log("deleteID", id)
+  const query = {
+    text: `DELETE from user_workouts
+    WHERE id = $1`,
+    values: [id]
+}
+return pool.query(query)
+}
+
+
 
   //get tracking values for chart generation
   const getDrinksChart = (userId) => {
@@ -239,6 +264,8 @@ module.exports = pool => {
     initializeCount,
     insertDate,
     getCurrentDay,
-    updateCount
+    updateCount,
+    deleteRecipe,
+    deleteWorkout
   };
 };
